@@ -1,5 +1,5 @@
 {
-  "name": "readingtracker",
+  "name": "readingtracker-frontend",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
