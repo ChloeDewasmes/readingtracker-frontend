@@ -19,7 +19,7 @@ import ButtonPlainText from "../components/ButtonPlainText";
 const EMAIL_REGEX =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-const BACKEND_ADDRESS = "http://192.168.1.169:3000";
+const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
 
 export default function SignupScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -61,9 +61,7 @@ export default function SignupScreen({ navigation }) {
     >
       <Image
         style={styles.img}
-        source={{
-          uri: "https://res.cloudinary.com/ddoqxafok/image/upload/v1710191558/rnhxlupxbteo1kw5nf0c.jpg",
-        }}
+        source={require("../assets/images/book-logo.jpg")}
       />
 
       <Text style={styles.title}>Créer un compte</Text>
@@ -120,15 +118,14 @@ export default function SignupScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F4F5FF",
+    backgroundColor: "#FFFFFF",
     alignItems: "center",
     justifyContent: "center",
   },
   img: {
-    width: "100%",
+    width: 200,
     height: 200,
     borderRadius: 100,
-    // marginTop: 100,
     marginBottom: 50,
   },
   title: {

@@ -1,170 +1,145 @@
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  TouchableOpacity,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Dimensions,
-  ActivityIndicator,
-} from "react-native";
+import { StyleSheet, Text, Image, View, ScrollView } from "react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faBookmark } from "@fortawesome/free-regular-svg-icons";
+import { faUser, faBookMedical } from "@fortawesome/free-solid-svg-icons";
 import globalStyles from "../globalStyles";
-import { useEffect, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
 
 const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
 
 export default function HomeScreen({ navigation }) {
+  //const user = useSelector((state) => state.user.value);
+
+  /*const badgesList = user.badges.map((badge, i) => (
+    <Card key={i} badge={badge} />
+  ));*/
+  const badgesList = [];
+
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
-    >
-      <View style={styles.loadingContainer}>
-        <Text>Hoooome</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <FontAwesomeIcon
+          icon={faUser}
+          size={18}
+          style={{ color: "#56ADDB" }}
+          onPress={() => navigation.navigate("Profile")}
+        />
+        <Text style={globalStyles.title1}>Ma Bibliothèque</Text>
+        <FontAwesomeIcon
+          icon={faBookMedical}
+          size={22}
+          style={{ color: "#56ADDB" }}
+        />
       </View>
-    </KeyboardAvoidingView>
+
+      <View style={styles.level}>
+        <Text style={styles.levelText}>
+          20pts - Niveau Débutant (le nul...)
+        </Text>
+      </View>
+
+      <Text style={globalStyles.title2}>Livres Suivis</Text>
+      {badgesList.length === 0 ? ( // if badgesList is empty
+        <View style={styles.noBagdesContainer}>
+          <Text style={styles.text}>Vous n'avez pas de livre en cours.</Text>
+          <Text style={styles.text}>
+            Ajouter des livres et compléter la lecture pour obtenir des badges !
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollView}
+        >
+          {badgesList}
+        </ScrollView>
+      )}
+
+      <Text style={globalStyles.title2}>Livres Lus</Text>
+      {badgesList.length === 0 ? ( // if badgesList is empty
+        <View style={styles.noBagdesContainer}>
+          <Text style={styles.text}>
+            Vous n'avez pas encore terminé de livre.
+          </Text>
+          <Text style={styles.text}>
+            Complétez la lecture pour obtenir des badges !
+          </Text>
+        </View>
+      ) : (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollView}
+        >
+          {badgesList}
+        </ScrollView>
+      )}
+
+      <Text style={globalStyles.title2}>Badges</Text>
+      {badgesList.length === 0 ? ( // if badgesList is empty
+        <View style={styles.noBagdesContainer}>
+          <Image
+            style={styles.img}
+            source={require("../assets/images/book-logo.jpg")}
+          />
+          <Text style={styles.text}>Vous n'avez pas encore de badges.</Text>
+        </View>
+      ) : (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollView}
+        >
+          {badgesList}
+        </ScrollView>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  explorerContainer: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    width: "100%",
-  },
-  localisation: {
-    marginTop: 50,
-    color: "white",
-  },
-  localisationBold: {
-    marginTop: 4,
-    marginBottom: 24,
-    color: "white",
-    fontWeight: "bold",
-  },
-  organizers: {
-    marginLeft: 10,
-    gap: 8,
-    // flex: 0.33,
+    backgroundColor: "white",
   },
   header: {
-    flex: 0.25,
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#4A43EC",
-    width: "100%",
-  },
-  filtersButton: {
-    width: 70,
-    alignItems: "center",
-    backgroundColor: "#EBEDFF",
-    borderRadius: 100,
-    justifyContent: "center",
-    padding: 6,
-  },
-  textButton: {
-    color: "#5669FF",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    marginTop: 10,
-  },
-  body: {
-    flex: 0.8,
-    width: "100%",
-  },
-  listActivities: {
-    // height: "100%",
-  },
-  activitiesSectionContainer: {
-    flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    marginTop: 80,
+    marginHorizontal: 30,
+    marginBottom: 60,
   },
-  seeAllActivities: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "flex-end",
-    marginTop: 30,
-    marginRight: 16,
-  },
-  seeAllTitle: {
-    color: "#b8b6be",
-    fontWeight: "bold",
-  },
-  errorActivitiesFetch: {
-    marginTop: 24,
-    marginHorizontal: 20,
-    width: "90%",
-    lineHeight: 25,
-  },
-  scrollView: {
-    paddingHorizontal: 10,
-    // marginTop: 20,
-  },
-  searchContainer: {
-    // marginTop: 50,
-    flex: 0.2,
-    flexDirection: "column",
+  level: {
+    alignSelf: "center",
+    marginBottom: 20,
+    width: "85%",
+    height: "8%",
+    borderRadius: 10,
+    backgroundColor: "#AAB4FF",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#4A43EC",
-    width: "100%",
-    paddingBottom: 20,
-    borderBottomRightRadius: 33,
-    borderBottomLeftRadius: 33,
   },
-  search: {
-    flexDirection: "row",
-    gap: 8,
-    height: 45,
-    width: "90%",
+  levelText: {
+    fontSize: 16,
+    fontWeight: "500",
   },
-  searchBar: {
+  noBadgesContainer: {
     flex: 1,
     alignItems: "center",
-    flexDirection: "row",
-    paddingLeft: 10,
-    paddingRight: 10,
-    borderRadius: 12,
-    backgroundColor: "white",
+    justifyContent: "center",
   },
-  input: {
-    width: "90%",
-    color: "#747688",
-    fontSize: 16,
-    marginLeft: 10,
+  img: {
+    width: 80,
+    height: 80,
+    borderRadius: 150,
+    marginBottom: 20,
+    alignSelf: "center",
+    // backgroundColor: '#EEF0FF',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  dropdownContainer: {
-    width: "100%",
-  },
-  inputContainer: {
-    width: "90%",
-    fontSize: 16,
-    marginLeft: 10,
-    backgroundColor: "white",
-    marginLeft: 5,
-  },
-  suggestionListContainer: {
-    borderRadius: 3,
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-  },
-  rightButtonsContainerStyle: {
-    backgroundColor: "white",
+  text: {
+    textAlign: "center",
+    width: "80%",
+    lineHeight: 24,
+    alignSelf: "center",
   },
 });

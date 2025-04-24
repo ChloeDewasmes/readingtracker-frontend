@@ -3,31 +3,23 @@ import { StyleSheet } from "react-native";
 const globalStyles = StyleSheet.create({
   // TITLES
   title1: {
-    fontSize: 35,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#120D26",
   },
   title2: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#120D26",
-    marginTop: 80,
-    marginLeft: 20,
-    marginBottom: 16,
-  },
-  title3: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#120D26",
     marginTop: 24,
-    marginLeft: 20,
+    marginLeft: 30,
   },
-  title4: {
-    fontSize: 16,
+  title3: {
+    fontSize: 14,
     fontWeight: "bold",
     color: "#29253C",
     marginTop: 24,
-    marginLeft: 20,
+    marginLeft: 30,
     marginBottom: 4,
     textAlign: "left",
   },
