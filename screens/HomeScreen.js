@@ -1,4 +1,11 @@
-import { StyleSheet, Text, Image, View, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  Image,
+  View,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faBookmark } from "@fortawesome/free-regular-svg-icons";
 import { faUser, faBookMedical } from "@fortawesome/free-solid-svg-icons";
@@ -17,18 +24,21 @@ export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <FontAwesomeIcon
-          icon={faUser}
-          size={18}
-          style={{ color: "#56ADDB" }}
-          onPress={() => navigation.navigate("Profile")}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+          <FontAwesomeIcon
+            icon={faUser}
+            size={18}
+            style={{ color: "#56ADDB" }}
+          />
+        </TouchableOpacity>
         <Text style={globalStyles.title1}>Ma Bibliothèque</Text>
-        <FontAwesomeIcon
-          icon={faBookMedical}
-          size={22}
-          style={{ color: "#56ADDB" }}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate("AddBook")}>
+          <FontAwesomeIcon
+            icon={faBookMedical}
+            size={22}
+            style={{ color: "#56ADDB" }}
+          />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.level}>
@@ -42,7 +52,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.noBagdesContainer}>
           <Text style={styles.text}>Vous n'avez pas de livre en cours.</Text>
           <Text style={styles.text}>
-            Ajouter des livres et compléter la lecture pour obtenir des badges !
+            Ajouter des livres et pour suivre votre progression !
           </Text>
         </View>
       ) : (
