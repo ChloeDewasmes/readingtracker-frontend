@@ -13,7 +13,7 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import globalStyles from "../globalStyles";
-import Dropdown from "../components/Dropdown";
+import GenreDropdown from "../components/GenreDropdown";
 import Button from "../components/Button";
 
 const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
@@ -22,17 +22,21 @@ export default function ProfileScreen({ navigation }) {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [genre, setGenre] = useState("");
-  const [pageNumber, setPageNumber] = useState("");
-  const [progression, setProgression] = useState("");
+  const [totalPage, setTotalPage] = useState("");
+  const [pagesRead, setPagesRead] = useState("");
   const [inputError, setInputError] = useState("");
 
+  const handleGenreChange = (selectedGenre) => {
+    setGenre(selectedGenre);
+  };
+
   const handlePress = () => {
-    if ((title, author, genre, pageNumber)) {
-      console.log("Todo listo", `${BACKEND_ADDRESS}`);
+    if (title && author && genre && totalPage && pagesRead) {
+      console.log("genre: ", `${genre}`);
       fetch(`${BACKEND_ADDRESS}/books`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, author, genre, pageNumber, progression }),
+        body: JSON.stringify({ title, author, genre, totalPage, pagesRead }),
       })
         .then((response) => response.json())
         .then((data) => {
@@ -41,8 +45,8 @@ export default function ProfileScreen({ navigation }) {
             setTitle("");
             setAuthor("");
             setGenre("");
-            setPageNumber("");
-            setProgression("");
+            setTotalPage("");
+            setPagesRead("");
           }
           console.log(data.error);
         });
@@ -105,15 +109,15 @@ export default function ProfileScreen({ navigation }) {
         </View>
 
         <Text style={globalStyles.title2}>Genre</Text>
-        <Dropdown />
+        <GenreDropdown onSelectGenre={handleGenreChange} />
 
         <Text style={globalStyles.title2}>Nombre de page</Text>
         <View style={styles.border}>
           <TextInput
             placeholder="Nombre de page"
             keyboardType="numeric"
-            onChangeText={(value) => setPageNumber(value)}
-            value={pageNumber}
+            onChangeText={(value) => setTotalPage(value)}
+            value={totalPage}
             style={styles.input}
           />
         </View>
@@ -123,8 +127,8 @@ export default function ProfileScreen({ navigation }) {
           <TextInput
             placeholder="Nombre de pages lues"
             keyboardType="numeric"
-            onChangeText={(value) => setProgression(value)}
-            value={progression}
+            onChangeText={(value) => setPagesRead(value)}
+            value={pagesRead}
             style={styles.input}
           />
         </View>

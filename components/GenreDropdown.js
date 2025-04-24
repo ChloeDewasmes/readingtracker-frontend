@@ -38,7 +38,7 @@ const data = genres.sort().map((genre) => ({
   value: genre,
 }));
 
-const DropdownComponent = () => {
+const DropdownComponent = ({ onSelectGenre }) => {
   const [value, setValue] = useState(null);
 
   const renderItem = (item) => {
@@ -65,15 +65,16 @@ const DropdownComponent = () => {
       inputSearchStyle={styles.inputSearchStyle}
       iconStyle={styles.iconStyle}
       data={data}
+      value={value}
       search
       maxHeight={300}
       labelField="label"
       valueField="value"
       placeholder="Select genre"
       searchPlaceholder="Search..."
-      value={value}
       onChange={(item) => {
         setValue(item.value);
+        onSelectGenre(item.value);
       }}
       renderItem={renderItem}
     />
