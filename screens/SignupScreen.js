@@ -29,7 +29,6 @@ export default function SignupScreen({ navigation }) {
 
   const handlePress = () => {
     if (EMAIL_REGEX.test(email)) {
-      console.log("Connection - regex ok", `${BACKEND_ADDRESS}`);
       fetch(`${BACKEND_ADDRESS}/users/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -11,6 +11,7 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import globalStyles from "../globalStyles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
 
@@ -18,6 +19,7 @@ export default function ProfileScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>

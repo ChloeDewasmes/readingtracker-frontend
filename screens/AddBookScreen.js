@@ -15,6 +15,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import globalStyles from "../globalStyles";
 import GenreDropdown from "../components/GenreDropdown";
 import Button from "../components/Button";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
 
@@ -30,13 +31,25 @@ export default function ProfileScreen({ navigation }) {
     setGenre(selectedGenre);
   };
 
-  const handlePress = () => {
+  const handleAddBook = async () => {
+    const token = await AsyncStorage.getItem("userToken");
+
+    if (!token) {
+      console.log("Token not found, no user connected");
+      return;
+    }
     if (title && author && genre && totalPage && pagesRead) {
-      console.log("genre: ", `${genre}`);
       fetch(`${BACKEND_ADDRESS}/books`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, author, genre, totalPage, pagesRead }),
+        body: JSON.stringify({
+          title,
+          author,
+          genre,
+          totalPage,
+          pagesRead,
+          token,
+        }),
       })
         .then((response) => response.json())
         .then((data) => {
@@ -134,7 +147,7 @@ export default function ProfileScreen({ navigation }) {
         </View>
 
         <View style={styles.bottom}>
-          <Button onPress={handlePress} text="Ajouter" />
+          <Button onPress={handleAddBook} text="Ajouter" />
         </View>
       </View>
     </TouchableWithoutFeedback>
