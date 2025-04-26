@@ -6,20 +6,46 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faBookmark } from "@fortawesome/free-regular-svg-icons";
 import { faUser, faBookMedical } from "@fortawesome/free-solid-svg-icons";
 import globalStyles from "../globalStyles";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
 
 export default function HomeScreen({ navigation }) {
-  //const user = useSelector((state) => state.user.value);
+  const [userData, setUserData] = useState({
+    points: 0,
+    badges: [],
+    followedBooks: [],
+    readBooks: [],
+  });
+
+  useEffect(() => {
+    AsyncStorage.getItem("userToken").then((token) => {
+      if (token) {
+        fetch(`${BACKEND_ADDRESS}/users/${token}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.result) {
+              setUserData(data.data);
+              // Ex: data.data.points, data.data.badges, etc.
+            }
+          })
+          .catch((err) => {
+            console.log("Erreur:", err);
+          });
+      }
+    });
+  }, []);
 
   /*const badgesList = user.badges.map((badge, i) => (
     <Card key={i} badge={badge} />
   ));*/
   const badgesList = [];
+  console.log("gnrjelz", userData);
 
   return (
     <View style={styles.container}>
@@ -43,12 +69,12 @@ export default function HomeScreen({ navigation }) {
 
       <View style={styles.level}>
         <Text style={styles.levelText}>
-          20pts - Niveau Débutant (le nul...)
+          {userData.points} pts - Niveau Débutant (le nul...)
         </Text>
       </View>
 
       <Text style={globalStyles.title2}>Livres Suivis</Text>
-      {badgesList.length === 0 ? ( // if badgesList is empty
+      {userData.followedBooks.length === 0 ? ( // if the user isn't reading any book
         <View style={styles.noBagdesContainer}>
           <Text style={styles.text}>Vous n'avez pas de livre en cours.</Text>
           <Text style={styles.text}>
@@ -65,7 +91,7 @@ export default function HomeScreen({ navigation }) {
       )}
 
       <Text style={globalStyles.title2}>Livres Lus</Text>
-      {badgesList.length === 0 ? ( // if badgesList is empty
+      {userData.readBooks.length === 0 ? ( // if the user haven't finished any book
         <View style={styles.noBagdesContainer}>
           <Text style={styles.text}>
             Vous n'avez pas encore terminé de livre.
@@ -84,7 +110,7 @@ export default function HomeScreen({ navigation }) {
       )}
 
       <Text style={globalStyles.title2}>Badges</Text>
-      {badgesList.length === 0 ? ( // if badgesList is empty
+      {userData.badges.length === 0 ? ( // if the user doesn't have any badge
         <View style={styles.noBagdesContainer}>
           <Image
             style={styles.img}

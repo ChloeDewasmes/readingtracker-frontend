@@ -24,10 +24,10 @@ export default function SigninScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [authentificationError, setAuthentificationError] = useState(Boolean);
+  const [authenticationError, setAuthenticationError] = useState(Boolean);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handlePress = async () => {
+  const handleSignIn = async () => {
     if (EMAIL_REGEX.test(email)) {
       fetch(`${BACKEND_ADDRESS}/users/signin`, {
         method: "POST",
@@ -47,7 +47,7 @@ export default function SigninScreen({ navigation }) {
                 console.error("Erreur lors du stockage du token :", error);
               });
           } else {
-            setAuthentificationError(true);
+            setAuthenticationError(true);
           }
         })
         .catch((error) => {
@@ -80,7 +80,7 @@ export default function SigninScreen({ navigation }) {
             <Text style={styles.error}>Email invalide</Text>
           </View>
         )}
-        {authentificationError && (
+        {authenticationError && (
           <View>
             <Text style={styles.error}>Email ou mot de passe invalide</Text>
           </View>
@@ -118,7 +118,7 @@ export default function SigninScreen({ navigation }) {
       </View>
 
       <View style={styles.bottom}>
-        <Button onPress={handlePress} text="Se connecter" />
+        <Button onPress={handleSignIn} text="Se connecter" />
         <ButtonPlainText
           onPress={() => navigation.navigate("Signup")}
           text="Pas encore de compte ? Inscrivez-vous ici"

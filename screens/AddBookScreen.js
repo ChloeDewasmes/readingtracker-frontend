@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -83,7 +85,6 @@ export default function ProfileScreen({ navigation }) {
           </View>
 
           <View style={{ flex: 2, alignItems: "center" }}>
-            {/* flex: 2 prends les 2/4 (la moitié) de l'écran */}
             <Text style={globalStyles.title1} numberOfLines={1}>
               Ajout d'un livre
             </Text>
@@ -94,11 +95,9 @@ export default function ProfileScreen({ navigation }) {
 
         <View style={styles.inputContainer}>
           {inputError && (
-            <View>
-              <Text style={styles.error}>
-                Tous les champs doivent être remplis.
-              </Text>
-            </View>
+            <Text style={styles.error}>
+              Tous les champs doivent être remplis.
+            </Text>
           )}
           <Text style={globalStyles.title2}>Titre</Text>
           <View style={styles.border}>
@@ -167,10 +166,7 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   bottom: {
-    position: "absolute",
-    bottom: 30,
-    gap: 20,
-    marginBottom: 30,
+    marginTop: 30,
     width: "100%",
     alignItems: "center",
   },

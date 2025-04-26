@@ -27,7 +27,7 @@ export default function SignupScreen({ navigation }) {
   const [emailError, setEmailError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handlePress = () => {
+  const handleSignUp = () => {
     if (EMAIL_REGEX.test(email)) {
       fetch(`${BACKEND_ADDRESS}/users/signup`, {
         method: "POST",
@@ -104,7 +104,7 @@ export default function SignupScreen({ navigation }) {
       </View>
 
       <View style={styles.bottom}>
-        <Button onPress={handlePress} text="Se connecter" />
+        <Button onPress={handleSignUp} text="S'inscrire" />
         <ButtonPlainText
           onPress={() => navigation.navigate("Signin")}
           text="Déjà inscrit ? Connectez-vous ici"
