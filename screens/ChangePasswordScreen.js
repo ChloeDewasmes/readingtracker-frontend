@@ -23,21 +23,31 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
 
 export default function ChangePasswordScreen({ navigation }) {
-  const [password, setPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmedPassword, setConfirmedPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [authenticationError, setAuthenticationError] = useState(Boolean);
+  const [passwords, setPasswords] = useState({
+    old: "",
+    new: "",
+    confirm: "",
+  });
   const [showPasswords, setShowPasswords] = useState({
     old: false,
     new: false,
     confirm: false,
   });
+  const [passwordError, setPasswordError] = useState("");
+  const [authenticationError, setAuthenticationError] = useState(Boolean);
 
-  //route modif pwd
-  const handleChangePassword = async () => {
-    console.log("modif");
-    //récup token asyncStorage
+  //change each password input change
+  const handleChangePassword = (field, value) => {
+    //récup token AsyncStorage
+    setPasswords((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  //save new password - on click
+  const handleSaveNewPassword = () => {
+    console.log("sauvegarder");
   };
 
   // Show passwords
@@ -47,6 +57,12 @@ export default function ChangePasswordScreen({ navigation }) {
       [field]: !prev[field],
     }));
   };
+
+  const fields = [
+    { key: "old", label: "Ancien mot de passe" },
+    { key: "new", label: "Nouveau mot de passe" },
+    { key: "confirm", label: "Confirmer le mot de passe" },
+  ];
 
   return (
     <KeyboardAvoidingView
@@ -75,67 +91,33 @@ export default function ChangePasswordScreen({ navigation }) {
         <View style={{ flex: 1 }} />
       </View>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.title}>Ancien mot de passe</Text>
-        <View style={globalStyles.border}>
-          <Ionicons name="lock-closed-outline" size={24} color="#BBC3FF" />
-          <TextInput
-            placeholder="Ancien mot de passe"
-            textContentType="password"
-            secureTextEntry={!showPasswords.old}
-            onChangeText={(value) => setPassword(value)}
-            value={password}
-            style={styles.input}
-          />
-          <MaterialCommunityIcons
-            name={showPasswords.old ? "eye-off" : "eye"}
-            size={24}
-            color="#BBC3FF"
-            style={styles.icon}
-            onPress={() => toggleShowPassword("old")}
-          />
+      {fields.map(({ key, label, icon }) => (
+        <View key={key}>
+          <Text style={styles.title}>{label}</Text>
+          <View style={globalStyles.border}>
+            {icon && <Ionicons name={icon} size={24} color="#BBC3FF" />}
+            <TextInput
+              placeholder={label}
+              textContentType="password"
+              secureTextEntry={!showPasswords[key]}
+              onChangeText={(text) => handleChangePassword(key, text)}
+              value={passwords[key]}
+              style={styles.input}
+            />
+            <MaterialCommunityIcons
+              name={showPasswords[key] ? "eye-off" : "eye"}
+              size={24}
+              color="#BBC3FF"
+              style={styles.icon}
+              onPress={() => toggleShowPassword(key)}
+            />
+          </View>
         </View>
-        <Text style={styles.title}>Nouveau mot de passe</Text>
-        <View style={globalStyles.border}>
-          <TextInput
-            placeholder="Nouveau mot de passe"
-            textContentType="password"
-            secureTextEntry={!showPasswords.new}
-            onChangeText={(value) => setNewPassword(value)}
-            value={newPassword}
-            style={styles.input}
-          />
-          <MaterialCommunityIcons
-            name={showPasswords.new ? "eye-off" : "eye"}
-            size={24}
-            color="#BBC3FF"
-            style={styles.icon}
-            onPress={() => toggleShowPassword("new")}
-          />
-        </View>
-        <Text style={styles.title}>Confirmer le mot de passe</Text>
-        <View style={globalStyles.border}>
-          <TextInput
-            placeholder="Confirmer le mot de passe"
-            textContentType="password"
-            secureTextEntry={!showPasswords.confirm}
-            onChangeText={(value) => setConfirmedPassword(value)}
-            value={confirmedPassword}
-            style={styles.input}
-          />
-          <MaterialCommunityIcons
-            name={showPasswords.confirm ? "eye-off" : "eye"}
-            size={24}
-            color="#BBC3FF"
-            style={styles.icon}
-            onPress={() => toggleShowPassword("confirm")}
-          />
-        </View>
-      </View>
+      ))}
 
       <View style={styles.bottom}>
         <Button
-          onPress={handleChangePassword}
+          onPress={handleSaveNewPassword}
           text="Modifier le mot de passe"
         />
       </View>
