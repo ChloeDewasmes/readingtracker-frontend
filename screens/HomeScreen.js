@@ -45,7 +45,6 @@ export default function HomeScreen({ navigation }) {
     <Card key={i} badge={badge} />
   ));*/
   const badgesList = [];
-  console.log("gnrjelz", userData);
 
   return (
     <View style={styles.container}>

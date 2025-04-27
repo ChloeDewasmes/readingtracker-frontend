@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Platform,
   KeyboardAvoidingView,
+  Modal,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -28,6 +29,7 @@ export default function ProfileScreen({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [emailUpdated, setEmailUpdated] = useState(Boolean);
+  const [deleteValidation, setDeleteValidation] = useState(Boolean);
 
   const EMAIL_REGEX =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -87,13 +89,14 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleDeleteAccount = async () => {
+    setDeleteValidation(false);
     const token = await AsyncStorage.getItem("userToken");
 
     if (!token) {
       console.log("Token not found, no user connected");
       return;
     }
-    fetch(`${BACKEND_ADDRESS}/users/deleteAccount/:token`, {
+    fetch(`${BACKEND_ADDRESS}/users/deleteAccount/${token}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token }),
@@ -172,15 +175,19 @@ export default function ProfileScreen({ navigation }) {
           <Button onPress={handleUpdateEmail} text="Modifier l'adresse mail" />
 
           <Text style={styles.subtitle}>Mot de passe</Text>
-          <View style={globalStyles.border}>
-            <Ionicons name="lock-closed-outline" size={24} color="#BBC3FF" />
-            <TextInput
-              placeholder="********"
-              textContentType="password"
-              secureTextEntry={!showPassword}
-              style={styles.input}
-            />
-          </View>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("ChangePassword")}
+            style={{ width: "100%" }}
+          >
+            <View style={globalStyles.border} pointerEvents="none">
+              <Ionicons name="lock-closed-outline" size={24} color="#BBC3FF" />
+              <TextInput
+                value="********"
+                editable={false}
+                style={[styles.input, { color: "#C7C7CD" }]}
+              />
+            </View>
+          </TouchableOpacity>
         </View>
 
         <View style={{ marginTop: 30, gap: 15 }}>
@@ -195,11 +202,40 @@ export default function ProfileScreen({ navigation }) {
               color="#BBC3FF"
             />
             <ButtonPlainText
-              onPress={handleDeleteAccount}
+              onPress={() => setDeleteValidation(true)}
               text="Supprimer le compte"
             />
           </View>
         </View>
+        <Modal
+          transparent={true}
+          visible={deleteValidation}
+          animationType="fade"
+          onRequestClose={() => setDeleteValidation(false)}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>
+                Êtes-vous sûr de vouloir supprimer ce compte et toutes les
+                données qui y sont associées ?
+              </Text>
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={() => setDeleteValidation(false)}
+                >
+                  <Text style={styles.cancelButtonText}>Annuler</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.confirmButton}
+                  onPress={handleDeleteAccount}
+                >
+                  <Text style={styles.confirmButtonText}>Confirmer</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </KeyboardAvoidingView>
   );
@@ -258,5 +294,52 @@ const styles = StyleSheet.create({
     color: "#7887FF",
     fontSize: 14,
     marginLeft: 10,
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  cancelButton: {
+    backgroundColor: "#ccc",
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginRight: 10,
+    alignItems: "center",
+  },
+  confirmButton: {
+    backgroundColor: "#FF6B6B",
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginLeft: 10,
+    alignItems: "center",
+  },
+  cancelButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  confirmButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });

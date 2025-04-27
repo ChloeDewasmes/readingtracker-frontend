@@ -21,7 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
 
-export default function ProfileScreen({ navigation }) {
+export default function ChangePasswordScreen({ navigation }) {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [genre, setGenre] = useState("");
@@ -85,8 +85,8 @@ export default function ProfileScreen({ navigation }) {
           </View>
 
           <View style={{ flex: 2, alignItems: "center" }}>
-            <Text style={globalStyles.title1} numberOfLines={1}>
-              Ajout d'un livre
+            <Text style={[globalStyles.title1, { textAlign: "center" }]}>
+              Modification du mot de passe
             </Text>
           </View>
 
@@ -186,7 +186,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginHorizontal: 30,
   },
-  input: {
-    color: "#7887FF",
+  text: {
+    textAlign: "center",
+    width: "80%",
+    lineHeight: 24,
+    alignSelf: "center",
   },
 });

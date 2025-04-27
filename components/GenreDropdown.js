@@ -70,7 +70,7 @@ const DropdownComponent = ({ onSelectGenre }) => {
       maxHeight={300}
       labelField="label"
       valueField="value"
-      placeholder="Select genre"
+      placeholder="Sélectionner le genre"
       searchPlaceholder="Search..."
       onChange={(item) => {
         setValue(item.value);
@@ -116,10 +116,11 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     fontSize: 14,
-    color: "#808080",
+    color: "#C7C7CD",
   },
   selectedTextStyle: {
-    fontSize: 16,
+    fontSize: 14,
+    color: "#7887FF",
   },
   iconStyle: {
     width: 20,
