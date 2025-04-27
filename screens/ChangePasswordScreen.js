@@ -1,13 +1,9 @@
 import {
   StyleSheet,
   Text,
-  Image,
   View,
-  ScrollView,
   TextInput,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  Keyboard,
   Platform,
   KeyboardAvoidingView,
 } from "react-native";
@@ -34,11 +30,10 @@ export default function ChangePasswordScreen({ navigation }) {
     confirm: false,
   });
   const [passwordError, setPasswordError] = useState("");
-  const [authenticationError, setAuthenticationError] = useState(Boolean);
+  const [passwordUpdated, setPasswordUpdated] = useState(Boolean);
 
   //change each password input change
   const handleChangePassword = (field, value) => {
-    //récup token AsyncStorage
     setPasswords((prev) => ({
       ...prev,
       [field]: value,
@@ -46,8 +41,58 @@ export default function ChangePasswordScreen({ navigation }) {
   };
 
   //save new password - on click
-  const handleSaveNewPassword = () => {
-    console.log("sauvegarder");
+  const handleSaveNewPassword = async () => {
+    setPasswordUpdated(false);
+    setPasswordError("");
+    const {
+      old: oldPassword,
+      new: newPassword,
+      confirm: confirmPassword,
+    } = passwords;
+
+    if (newPassword !== confirmPassword) {
+      // Show error message if passwords are not matching
+      setPasswordError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+
+    // If passwords are similar, send request to backend
+    const token = await AsyncStorage.getItem("userToken");
+
+    // Error messages to show user
+    const errorMessages = {
+      OLD_PASSWORD_INCORRECT: "Le mot de passe actuel est incorrect.",
+      NEW_PASSWORDS_DO_NOT_MATCH: "Les mots de passe ne correspondent pas.",
+    };
+
+    if (token) {
+      fetch(`${BACKEND_ADDRESS}/users/password/${token}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          oldPassword,
+          newPassword,
+          confirmPassword,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.result) {
+            console.log("Password successfully updated");
+            setPasswordUpdated(true);
+          } else {
+            console.log(data.error);
+            setPasswordError(
+              errorMessages[data.error] || "Une erreur est survenue"
+            );
+          }
+        })
+        .catch((err) => {
+          console.log("Error occurred:", err);
+        });
+    }
   };
 
   // Show passwords
@@ -102,7 +147,7 @@ export default function ChangePasswordScreen({ navigation }) {
               secureTextEntry={!showPasswords[key]}
               onChangeText={(text) => handleChangePassword(key, text)}
               value={passwords[key]}
-              style={styles.input}
+              style={globalStyles.input}
             />
             <MaterialCommunityIcons
               name={showPasswords[key] ? "eye-off" : "eye"}
@@ -114,6 +159,18 @@ export default function ChangePasswordScreen({ navigation }) {
           </View>
         </View>
       ))}
+      {passwordError && (
+        <View>
+          <Text style={styles.error}>{passwordError}</Text>
+        </View>
+      )}
+      {passwordUpdated && (
+        <View>
+          <Text style={styles.updated}>
+            Le mot de passe a bien été mis à jour !
+          </Text>
+        </View>
+      )}
 
       <View style={styles.bottom}>
         <Button
@@ -159,11 +216,10 @@ const styles = StyleSheet.create({
     width: "90%",
     alignSelf: "center",
   },
-  input: {
-    flex: 1,
-    height: 56,
-    color: "#7887FF",
-    fontSize: 14,
-    marginLeft: 10,
+  updated: {
+    marginTop: 10,
+    color: "#56ADDB",
+    width: "90%",
+    alignSelf: "center",
   },
 });

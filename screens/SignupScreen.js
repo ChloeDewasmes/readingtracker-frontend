@@ -5,12 +5,10 @@ import {
   View,
   Platform,
   Image,
-  Switch,
   KeyboardAvoidingView,
 } from "react-native";
 import { useState } from "react";
 import globalStyles from "../globalStyles";
-import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "../components/Button";

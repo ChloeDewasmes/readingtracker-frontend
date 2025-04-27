@@ -152,12 +152,12 @@ export default function ProfileScreen({ navigation }) {
               autoComplete="email"
               onChangeText={(value) => setEmail(value)}
               value={email}
-              style={styles.input}
+              style={globalStyles.input}
             />
           </View>
           {emailUpdated && (
             <View>
-              <Text style={styles.validated}>L'email a bien été modifié.</Text>
+              <Text style={styles.updated}>L'email a bien été modifié.</Text>
             </View>
           )}
           {alreadyUsedEmail && (
@@ -184,7 +184,7 @@ export default function ProfileScreen({ navigation }) {
               <TextInput
                 value="********"
                 editable={false}
-                style={[styles.input, { color: "#C7C7CD" }]}
+                style={[globalStyles.input, { color: "#C7C7CD" }]}
               />
             </View>
           </TouchableOpacity>
@@ -282,18 +282,11 @@ const styles = StyleSheet.create({
     width: "90%",
     alignSelf: "center",
   },
-  validated: {
+  updated: {
     marginTop: 10,
     color: "#56ADDB",
     width: "90%",
     alignSelf: "center",
-  },
-  input: {
-    flex: 1,
-    height: 56,
-    color: "#7887FF",
-    fontSize: 14,
-    marginLeft: 10,
   },
   modalBackground: {
     flex: 1,

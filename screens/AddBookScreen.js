@@ -1,15 +1,11 @@
 import {
   StyleSheet,
   Text,
-  Image,
   View,
-  ScrollView,
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
-  Platform,
-  KeyboardAvoidingView,
 } from "react-native";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
