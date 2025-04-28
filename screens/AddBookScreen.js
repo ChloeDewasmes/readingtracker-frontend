@@ -21,8 +21,8 @@ export default function ProfileScreen({ navigation }) {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [genre, setGenre] = useState("");
-  const [totalPage, setTotalPage] = useState("");
-  const [pagesRead, setPagesRead] = useState("");
+  const [totalPages, setTotalPages] = useState(0);
+  const [pagesRead, setPagesRead] = useState(0);
   const [inputError, setInputError] = useState("");
 
   const handleGenreChange = (selectedGenre) => {
@@ -30,13 +30,15 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleAddBook = async () => {
+    if (pagesRead > totalPages) return; //the number of pages read must be lower or equal to the total number of pages in the book
+
     const token = await AsyncStorage.getItem("userToken");
 
     if (!token) {
       console.log("Token not found, no user connected");
       return;
     }
-    if (title && author && genre && totalPage && pagesRead) {
+    if (title && author && genre && totalPages && pagesRead) {
       fetch(`${BACKEND_ADDRESS}/books`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -44,7 +46,7 @@ export default function ProfileScreen({ navigation }) {
           title,
           author,
           genre,
-          totalPage,
+          totalPages,
           pagesRead,
           token,
         }),
@@ -56,10 +58,9 @@ export default function ProfileScreen({ navigation }) {
             setTitle("");
             setAuthor("");
             setGenre("");
-            setTotalPage("");
+            setTotalPages("");
             setPagesRead("");
           }
-          console.log(data.error);
         });
     } else {
       setInputError(true);
@@ -95,6 +96,11 @@ export default function ProfileScreen({ navigation }) {
               Tous les champs doivent être remplis.
             </Text>
           )}
+          {pagesRead > totalPages && (
+            <Text style={styles.error}>
+              Oups, tu as lu plus de pages que le livre n'en contient !
+            </Text>
+          )}
           <Text style={globalStyles.title2}>Titre</Text>
           <View style={styles.border}>
             <TextInput
@@ -124,8 +130,8 @@ export default function ProfileScreen({ navigation }) {
           <TextInput
             placeholder="Nombre de page"
             keyboardType="numeric"
-            onChangeText={(value) => setTotalPage(value)}
-            value={totalPage}
+            onChangeText={(value) => setTotalPages(parseInt(value, 10) || "")} //stored as number to check condition pagesRead < TotalPages
+            value={totalPages}
             style={styles.input}
           />
         </View>
@@ -135,7 +141,7 @@ export default function ProfileScreen({ navigation }) {
           <TextInput
             placeholder="Nombre de pages lues"
             keyboardType="numeric"
-            onChangeText={(value) => setPagesRead(value)}
+            onChangeText={(value) => setPagesRead(parseInt(value, 10) || "")} //stored as number to check condition pagesRead < TotalPages
             value={pagesRead}
             style={styles.input}
           />
