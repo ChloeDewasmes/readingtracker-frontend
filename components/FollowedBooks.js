@@ -26,16 +26,16 @@ export default function FollowedBooks({ bookId, pagesRead }) {
 
   useEffect(() => {
     // Get book info with its id
-    fetch(`${BACKEND_ADDRESS}/books/followedBook/${bookId}`)
+    fetch(`${BACKEND_ADDRESS}/books/${bookId}`)
       .then((response) => response.json())
       .then((data) => {
-        // get needed data (title and total pages in the book)
+        // get needed data (title, author and total pages of the book)
         const { title, author, totalPages } = data;
         setBookData({ title, author, totalPages });
         setLoading(false);
       })
       .catch((err) => {
-        console.log("Erreur lors de la récupération du livre:", err);
+        console.log("Erreur lors de la récupération du livre suivi:", err);
         setLoading(false);
       });
   }, [bookId]);
@@ -69,7 +69,14 @@ export default function FollowedBooks({ bookId, pagesRead }) {
       .then((data) => {
         if (data.result) {
           console.log("Progression mise à jour !");
-          setUpdateProgression(false);
+          //reload informations
+          fetch(`${BACKEND_ADDRESS}/books/followedBook/${bookId}`)
+            .then((response) => response.json())
+            .then((updatedData) => {
+              const { title, totalPages } = updatedData;
+              setBookData({ title, totalPages });
+              setUpdateProgression(false); // then close modal
+            });
         } else {
           console.log("Erreur:", data.error);
         }
@@ -168,6 +175,7 @@ const styles = StyleSheet.create({
   },
   bookTitle: {
     fontSize: 16,
+    width: "85%",
   },
   progressionBorder: {
     width: 200,
