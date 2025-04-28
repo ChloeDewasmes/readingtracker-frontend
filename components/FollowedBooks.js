@@ -1,19 +1,28 @@
 import {
   StyleSheet,
   Text,
+  TextInput,
   View,
   TouchableOpacity,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faBookmark } from "@fortawesome/free-regular-svg-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
 
-export default function FollowedBooks({ bookId, pagesRead, onPress }) {
-  const [bookData, setBookData] = useState({ title: "", totalPages: 0 });
+export default function FollowedBooks({ bookId, pagesRead }) {
+  const [bookData, setBookData] = useState({
+    title: "",
+    author: "",
+    totalPages: 0,
+  });
   const [loading, setLoading] = useState(true);
+  const [updateProgression, setUpdateProgression] = useState(Boolean);
+  const [updatedPagesRead, setUpdatedPagesRead] = useState(pagesRead);
 
   useEffect(() => {
     // Get book info with its id
@@ -21,8 +30,8 @@ export default function FollowedBooks({ bookId, pagesRead, onPress }) {
       .then((response) => response.json())
       .then((data) => {
         // get needed data (title and total pages in the book)
-        const { title, totalPages } = data;
-        setBookData({ title, totalPages });
+        const { title, author, totalPages } = data;
+        setBookData({ title, author, totalPages });
         setLoading(false);
       })
       .catch((err) => {
@@ -40,11 +49,53 @@ export default function FollowedBooks({ bookId, pagesRead, onPress }) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
+  const handleUpdateProgression = async () => {
+    const token = await AsyncStorage.getItem("userToken");
+
+    if (!token) {
+      console.log("Token not found");
+      return;
+    }
+
+    fetch(`${BACKEND_ADDRESS}/users/updatePagesRead/${token}/${bookId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        updatedPagesRead,
+        totalPages: bookData.totalPages,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.result) {
+          console.log("Progression mise à jour !");
+          setUpdateProgression(false);
+        } else {
+          console.log("Erreur:", data.error);
+        }
+      })
+      .catch((err) => {
+        console.log("Erreur lors de la mise à jour:", err);
+      });
+  };
+
+  const handleMarkAsRead = () => {
+    setUpdatedPagesRead(bookData.totalPages);
+    handleUpdateProgression();
+  };
+
   return (
     <View style={styles.book}>
-      <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
+      <TouchableOpacity
+        onPress={() => {
+          setUpdateProgression(true);
+        }}
+        activeOpacity={0.8}
+      >
         <View style={{ flexDirection: "column" }}>
-          <Text style={styles.bookTitle}>{bookData.title}</Text>
+          <Text style={styles.bookTitle}>
+            {bookData.title} - {bookData.author}
+          </Text>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <View style={styles.progressionBorder}>
               <View
@@ -55,13 +106,55 @@ export default function FollowedBooks({ bookId, pagesRead, onPress }) {
           </View>
         </View>
       </TouchableOpacity>
-      <View style={styles.readIcon}>
+      <TouchableOpacity style={styles.readIcon} onPress={handleMarkAsRead}>
         <FontAwesomeIcon
           icon={faBookmark}
           size={18}
           style={{ color: "#56ADDB" }}
         />
-      </View>
+      </TouchableOpacity>
+      <Modal
+        transparent={true}
+        visible={updateProgression}
+        animationType="fade"
+        onRequestClose={() => setUpdateProgression(false)}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Où en es-tu dans ta lecture ?</Text>
+            {updatedPagesRead > bookData.totalPages && (
+              <Text style={styles.error}>
+                Oups, tu as lu plus de pages que le livre n'en contient !
+              </Text>
+            )}
+            <View style={styles.border}>
+              <TextInput
+                placeholder="Nombre de pages lues"
+                keyboardType="numeric"
+                onChangeText={(value) =>
+                  setUpdatedPagesRead(parseInt(value, 10) || "")
+                } //stored as number to check condition pagesRead < TotalPages
+                value={updatedPagesRead}
+                style={styles.input}
+              />
+            </View>
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setUpdateProgression(false)}
+              >
+                <Text style={styles.cancelButtonText}>Annuler</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.confirmButton}
+                onPress={handleUpdateProgression}
+              >
+                <Text style={styles.confirmButtonText}>Valider</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -97,5 +190,73 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 5,
     right: 30,
+  },
+  // MODAL
+  border: {
+    justifyContent: "center",
+    paddingLeft: 10,
+    borderColor: "#BBC3FF",
+    borderWidth: 1.5,
+    borderRadius: 5,
+    height: 30,
+    width: "100%",
+    marginTop: 10,
+    marginBottom: 20,
+    marginHorizontal: 30,
+  },
+  input: {
+    color: "#7887FF",
+  },
+  error: {
+    width: "85%",
+    color: "#EB5757",
+    textAlign: "center",
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  cancelButton: {
+    backgroundColor: "#ccc",
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginRight: 10,
+    alignItems: "center",
+  },
+  confirmButton: {
+    backgroundColor: "#56ADDB",
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginLeft: 10,
+    alignItems: "center",
+  },
+  cancelButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  confirmButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });

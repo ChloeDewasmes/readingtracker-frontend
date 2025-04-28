@@ -288,6 +288,7 @@ const styles = StyleSheet.create({
     width: "90%",
     alignSelf: "center",
   },
+  // MODAL
   modalBackground: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
