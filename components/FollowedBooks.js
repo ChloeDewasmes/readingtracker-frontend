@@ -100,7 +100,7 @@ export default function FollowedBooks({ bookId, pagesRead }) {
         activeOpacity={0.8}
       >
         <View style={{ flexDirection: "column" }}>
-          <Text style={styles.bookTitle}>
+          <Text style={styles.bookTitle} numberOfLines={1}>
             {bookData.title} - {bookData.author}
           </Text>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   bookTitle: {
     fontSize: 16,
-    width: "85%",
+    width: 300,
   },
   progressionBorder: {
     width: 200,

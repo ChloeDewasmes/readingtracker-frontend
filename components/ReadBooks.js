@@ -47,16 +47,9 @@ export default function ReadBooks({ bookId }) {
 
   return (
     <View style={styles.book}>
-      <TouchableOpacity
-        onPress={() => {
-          setUpdateProgression(true);
-        }}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.bookTitle}>
-          {bookData.title} - {bookData.author}
-        </Text>
-      </TouchableOpacity>
+      <Text style={styles.bookTitle} numberOfLines={1}>
+        {bookData.title} - {bookData.author}
+      </Text>
       <TouchableOpacity style={styles.readIcon} onPress={handleMarkAsUnread}>
         <FontAwesomeIcon
           icon={faBookmark}
@@ -73,14 +66,14 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     marginLeft: 30,
-    marginTop: 25,
+    marginTop: 20,
   },
   bookTitle: {
     fontSize: 16,
+    width: 300,
   },
   readIcon: {
     position: "absolute",
-    top: 5,
     right: 30,
   },
 });

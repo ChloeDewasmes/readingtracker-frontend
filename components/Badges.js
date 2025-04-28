@@ -4,12 +4,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const gradientColors = {
-  1: ["#FF512F", "#F09819", "#FFD700"], // gradient 1
-  2: ["#FF6EC7", "#8E2DE2", "#4A00E0"], // gradient 2
-  3: ["#00F5A0", "#00D9F5"], // gradient 3
+  1: ["#FF512F", "#F09819", "#FFD700"],
+  2: ["#FF6EC7", "#8E2DE2", "#4A00E0"],
+  3: ["#00F5A0", "#00D9F5"],
 };
 
-const Badge = ({ gradient = 1, iconName, number, size = 80, label }) => {
+const Badges = ({ gradient = 1, iconName, number, size = 80, label }) => {
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -70,4 +70,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Badge;
+export default Badges;

@@ -4,16 +4,18 @@ import {
   Image,
   View,
   ScrollView,
+  Modal,
   TouchableOpacity,
 } from "react-native";
 import { useEffect, useState } from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faUser, faBookMedical } from "@fortawesome/free-solid-svg-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import globalStyles from "../globalStyles";
 import FollowedBooks from "../components/FollowedBooks";
 import ReadBooks from "../components/ReadBooks";
-import Badge from "../components/Badge";
+import Badges from "../components/Badges";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
@@ -25,6 +27,8 @@ export default function HomeScreen({ navigation }) {
     followedBooks: [],
     readBooks: [],
   });
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedBadge, setSelectedBadge] = useState(null);
 
   useEffect(() => {
     AsyncStorage.getItem("userToken").then((token) => {
@@ -68,7 +72,127 @@ export default function HomeScreen({ navigation }) {
     return <ReadBooks key={i} bookId={book.bookId} />;
   });
 
-  const badgesList = [];
+  const getBadgeProps = (badge) => {
+    //don't show badge "reader_5" if badge "reader_20" was attributed
+    if (badge === "reader_5" && userData.badges.includes("reader_20")) {
+      return null;
+    }
+
+    //don't show badge "reader_1" if badge "reader_5" or "reader_20" was attributed
+    if (
+      badge === "reader_1" &&
+      (userData.badges.includes("reader_5") ||
+        userData.badges.includes("reader_20"))
+    ) {
+      return null;
+    }
+
+    // don't show badge "gender_3" if badge "gender_5" was attributed
+    if (badge === "genre_3" && userData.badges.includes("genre_5")) {
+      return null;
+    }
+
+    switch (badge) {
+      case "reader_1":
+        return {
+          gradient: 1,
+          iconName: "bookshelf",
+          number: 1,
+          label: "Première Lecture",
+          description:
+            "Félicitations pour ta toute première lecture terminée !",
+        };
+      case "reader_5":
+        return {
+          gradient: 1,
+          iconName: "bookshelf",
+          number: 5,
+          label: "Lecteur·trice assidu·e",
+          description: "Tu as lu 5 livres ! Continue comme ça !",
+        };
+      case "reader_20":
+        return {
+          gradient: 1,
+          iconName: "bookshelf",
+          number: 20,
+          label: "Bibliophile",
+          description: "20 livres lus, tu es un·e vrai·e passionné·e !",
+        };
+      case "genre_3":
+        return {
+          gradient: 2,
+          iconName: "bookshelf",
+          number: 3,
+          label: "Explorer les genres",
+          description: "Tu as exploré 3 genres littéraires différents.",
+        };
+      case "genre_5":
+        return {
+          gradient: 2,
+          iconName: "bookshelf",
+          number: 5,
+          label: "Aventurier·ère littéraire",
+          description: "5 livres de genres différents terminés !",
+        };
+      case "5_books_2_weeks":
+        return {
+          gradient: 3,
+          iconName: "lightning-bolt",
+          label: "Lecture rapide",
+          description:
+            "5 livres lus en seulement deux semaines ! Quelle vitesse impressionnante.",
+        };
+      case "300_pages_book":
+        return {
+          gradient: 3,
+          iconName: "book-open",
+          label: "Marathon de lecture",
+          description:
+            "Un livre de plus de 300 pages terminé ! Tu es prêt·e pour les grandes épopées.",
+        };
+      case "10_books_month":
+        return {
+          gradient: 1,
+          iconName: "calendar",
+          number: 10,
+          label: "10 livres dans un mois",
+          description:
+            "10 livres en un mois ?! Ta soif de lecture est sans limites !",
+        };
+      case "30_books_year":
+        return {
+          gradient: 2,
+          iconName: "calendar",
+          number: 30,
+          label: "30 livres dans l’année",
+          description:
+            "Objectif annuel atteint : 30 livres lus cette année. Bravo pour ta persévérance !",
+        };
+      default:
+        return {}; // Don't show any badge if no valid props
+    }
+  };
+
+  const badges = userData.badges.map((badge, index) => {
+    const badgeProps = getBadgeProps(badge);
+    if (!badgeProps) return null;
+    return (
+      <TouchableOpacity
+        key={index}
+        onPress={() => {
+          setSelectedBadge(badgeProps); // store props of the badge
+          setModalVisible(true); // open modal
+        }}
+      >
+        <Badges
+          gradient={badgeProps.gradient}
+          iconName={badgeProps.iconName}
+          number={badgeProps.number}
+          label={badgeProps.label}
+        />
+      </TouchableOpacity>
+    );
+  });
 
   return (
     <View style={styles.container}>
@@ -160,63 +284,39 @@ export default function HomeScreen({ navigation }) {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.badgeScrollView}
         >
-          <Badge
-            gradient={1}
-            iconName="bookshelf"
-            number={1}
-            label="Première Lecture"
-          />
-          <Badge
-            gradient={1}
-            iconName="bookshelf"
-            number={5}
-            label="Lecteur·trice assidu·e"
-          />
-          <Badge
-            gradient={1}
-            iconName="bookshelf"
-            number={20}
-            label="Bibliophile"
-          />
-
-          <Badge
-            gradient={2}
-            iconName="bookshelf"
-            number={3}
-            label="Explorer les genres"
-          />
-          <Badge
-            gradient={2}
-            iconName="bookshelf"
-            number={5}
-            label="Aventurier·ère littéraire"
-          />
-
-          <Badge
-            gradient={3}
-            iconName="lightning-bolt"
-            label="Lecture rapide"
-          />
-          <Badge
-            gradient={3}
-            iconName="book-open"
-            label="Marathon de lecture"
-          />
-
-          <Badge
-            gradient={1}
-            iconName="calendar"
-            number={10}
-            label="10 livres dans un mois"
-          />
-          <Badge
-            gradient={2}
-            iconName="calendar"
-            number={30}
-            label="30 livres dans l’année"
-          />
+          {badges}
         </ScrollView>
       )}
+      <Modal visible={modalVisible} animationType="fade" transparent>
+        <View style={styles.overlay}>
+          {selectedBadge && (
+            <View style={styles.modalContainer}>
+              {/* Close modal */}
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <MaterialCommunityIcons name="close" size={30} color="#333" />
+              </TouchableOpacity>
+
+              {/* Zoom on badge */}
+              <Badges
+                gradient={selectedBadge.gradient}
+                iconName={selectedBadge.iconName}
+                number={null} // don't show number on big badge
+                label={null} // On n'affiche pas le label ici pour plus de focus
+                size={150} // Plus grand que dans la liste
+              />
+
+              {/* Badge description */}
+              <Text style={styles.label}>{selectedBadge.label}</Text>
+              <Text style={styles.description}>
+                {selectedBadge.description}
+              </Text>
+            </View>
+          )}
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -287,5 +387,38 @@ const styles = StyleSheet.create({
     width: "80%",
     lineHeight: 24,
     alignSelf: "center",
+  },
+  //Modal
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)", // fond noir transparent
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    position: "relative",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 15,
+    left: 15,
+    zIndex: 10,
+  },
+  label: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: 20,
+    textAlign: "center",
+  },
+  description: {
+    fontSize: 16,
+    marginTop: 10,
+    textAlign: "center",
+    color: "#666",
   },
 });
