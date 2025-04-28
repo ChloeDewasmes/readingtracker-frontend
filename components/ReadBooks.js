@@ -42,7 +42,32 @@ export default function ReadBooks({ bookId }) {
   }
 
   const handleMarkAsUnread = () => {
-    console.log("mark as unread");
+    AsyncStorage.getItem("userToken")
+      .then((token) => {
+        fetch(`${BACKEND_ADDRESS}/users/undoRead/${token}/${bookId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then(async (response) => {
+            const data = await response.json();
+            if (response.ok) {
+              console.log(
+                "The book has been moved back to followed books",
+                data
+              );
+            } else {
+              console.log("Error:", data.message || "Unknown error");
+            }
+          })
+          .catch((err) => {
+            console.log("Request error:", err);
+          });
+      })
+      .catch((err) => {
+        console.log("Error retrieving token:", err);
+      });
   };
 
   return (

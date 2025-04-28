@@ -30,7 +30,7 @@ export default function HomeScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState(null);
 
-  useEffect(() => {
+  const handleUserDataRefresh = () => {
     AsyncStorage.getItem("userToken").then((token) => {
       if (token) {
         fetch(`${BACKEND_ADDRESS}/users/${token}`)
@@ -38,7 +38,6 @@ export default function HomeScreen({ navigation }) {
           .then((data) => {
             if (data.result) {
               setUserData(data.data);
-              // Ex: data.data.points, data.data.badges, etc.
             }
           })
           .catch((err) => {
@@ -46,8 +45,25 @@ export default function HomeScreen({ navigation }) {
           });
       }
     });
-  }, [userData]);
+  };
 
+  useEffect(() => {
+    handleUserDataRefresh();
+  }, []);
+
+  /* FOLLOWED BOOKS */
+  const followedBooks = userData.followedBooks.map((book, i) => {
+    return (
+      <FollowedBooks key={i} bookId={book.bookId} pagesRead={book.pagesRead} />
+    );
+  });
+
+  /* READ BOOKS */
+  const readBooks = userData.readBooks.map((book, i) => {
+    return <ReadBooks key={i} bookId={book.bookId} />;
+  });
+
+  /* POINTS */
   let level = "🐣 Débutant";
   let levelMessage = "Chaque page est une victoire !";
 
@@ -62,16 +78,7 @@ export default function HomeScreen({ navigation }) {
     levelMessage = "Un maître des livres, bravo !";
   }
 
-  const followedBooks = userData.followedBooks.map((book, i) => {
-    return (
-      <FollowedBooks key={i} bookId={book.bookId} pagesRead={book.pagesRead} />
-    );
-  });
-
-  const readBooks = userData.readBooks.map((book, i) => {
-    return <ReadBooks key={i} bookId={book.bookId} />;
-  });
-
+  /* BADGES */
   const getBadgeProps = (badge) => {
     //don't show badge "reader_5" if badge "reader_20" was attributed
     if (badge === "reader_5" && userData.badges.includes("reader_20")) {
