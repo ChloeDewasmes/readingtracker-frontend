@@ -54,13 +54,24 @@ export default function HomeScreen({ navigation }) {
   /* FOLLOWED BOOKS */
   const followedBooks = userData.followedBooks.map((book, i) => {
     return (
-      <FollowedBooks key={i} bookId={book.bookId} pagesRead={book.pagesRead} />
+      <FollowedBooks
+        key={i}
+        bookId={book.bookId}
+        pagesRead={book.pagesRead}
+        onDataChange={handleUserDataRefresh}
+      />
     );
   });
 
   /* READ BOOKS */
   const readBooks = userData.readBooks.map((book, i) => {
-    return <ReadBooks key={i} bookId={book.bookId} />;
+    return (
+      <ReadBooks
+        key={i}
+        bookId={book.bookId}
+        onDataChange={handleUserDataRefresh}
+      />
+    );
   });
 
   /* POINTS */

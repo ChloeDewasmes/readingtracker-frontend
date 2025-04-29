@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
 
-export default function FollowedBooks({ bookId, pagesRead }) {
+export default function FollowedBooks({ bookId, pagesRead, onDataChange }) {
   const [bookData, setBookData] = useState({
     title: "",
     author: "",
@@ -23,6 +23,7 @@ export default function FollowedBooks({ bookId, pagesRead }) {
   const [loading, setLoading] = useState(true);
   const [updateProgression, setUpdateProgression] = useState(Boolean);
   const [updatedPagesRead, setUpdatedPagesRead] = useState(pagesRead);
+  const [isBookFinished, setIsBookFinished] = useState(Boolean);
 
   useEffect(() => {
     // Get book info with its id
@@ -67,18 +68,14 @@ export default function FollowedBooks({ bookId, pagesRead }) {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log("data", data);
         if (data.result) {
           console.log("Progression mise à jour !");
-          //reload informations
-          fetch(`${BACKEND_ADDRESS}/books/followedBook/${bookId}`)
-            .then((response) => response.json())
-            .then((updatedData) => {
-              const { title, totalPages } = updatedData;
-              setBookData({ title, totalPages });
-              setUpdateProgression(false); // then close modal
-            });
-        } else {
-          console.log("Erreur:", data.error);
+          //reload updated informations
+          if (onDataChange) {
+            onDataChange(); // Refresh Home
+          }
+          setUpdateProgression(false); // then close modal
         }
       })
       .catch((err) => {
@@ -86,7 +83,7 @@ export default function FollowedBooks({ bookId, pagesRead }) {
       });
   };
 
-  const handleMarkAsRead = () => {
+  const handleMarkAsRead = async () => {
     setUpdatedPagesRead(bookData.totalPages);
     handleUpdateProgression();
   };

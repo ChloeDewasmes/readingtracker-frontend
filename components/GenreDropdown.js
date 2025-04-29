@@ -21,6 +21,7 @@ const genres = [
   "Manga",
   "Philosophie",
   "Poésie",
+  "Policier",
   "Politique / Économie",
   "Psychologie",
   "Romance",
@@ -32,7 +33,7 @@ const genres = [
   "Voyage / Guide touristique",
 ];
 
-// On génère la structure attendue avec label = value
+// Generate the expected structure with label = value
 const data = genres.sort().map((genre) => ({
   label: genre,
   value: genre,

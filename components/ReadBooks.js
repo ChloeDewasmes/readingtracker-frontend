@@ -1,11 +1,9 @@
 import {
   StyleSheet,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
   ActivityIndicator,
-  Modal,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -14,7 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
 
-export default function ReadBooks({ bookId }) {
+export default function ReadBooks({ bookId, onDataChange }) {
   const [bookData, setBookData] = useState({
     title: "",
     author: "",
@@ -57,6 +55,9 @@ export default function ReadBooks({ bookId }) {
                 "The book has been moved back to followed books",
                 data
               );
+              if (onDataChange) {
+                onDataChange(); // Refresh Home
+              }
             } else {
               console.log("Error:", data.message || "Unknown error");
             }
