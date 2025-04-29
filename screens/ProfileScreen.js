@@ -23,10 +23,8 @@ const BACKEND_ADDRESS = process.env.BACKEND_ADDRESS;
 export default function ProfileScreen({ navigation }) {
   const [token, setToken] = useState(null);
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [invalidEmail, setInvalidEmail] = useState("");
   const [alreadyUsedEmail, setAlreadyUsedEmail] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [emailUpdated, setEmailUpdated] = useState(Boolean);
   const [deleteValidation, setDeleteValidation] = useState(Boolean);
@@ -106,10 +104,6 @@ export default function ProfileScreen({ navigation }) {
         data.result;
         handleLogout(); //delete token from asyncStorage and go back to the authentication
       });
-  };
-
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
   };
 
   return (
