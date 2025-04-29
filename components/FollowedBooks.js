@@ -23,7 +23,6 @@ export default function FollowedBooks({ bookId, pagesRead, onDataChange }) {
   const [loading, setLoading] = useState(true);
   const [updateProgression, setUpdateProgression] = useState(Boolean);
   const [updatedPagesRead, setUpdatedPagesRead] = useState(pagesRead);
-  const [isBookFinished, setIsBookFinished] = useState(Boolean);
 
   useEffect(() => {
     // Get book info with its id
@@ -50,7 +49,7 @@ export default function FollowedBooks({ bookId, pagesRead, onDataChange }) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
-  const handleUpdateProgression = async () => {
+  const handleUpdateProgression = async (pagesReadValue) => {
     const token = await AsyncStorage.getItem("userToken");
 
     if (!token) {
@@ -62,16 +61,16 @@ export default function FollowedBooks({ bookId, pagesRead, onDataChange }) {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        updatedPagesRead,
+        updatedPagesRead: pagesReadValue || updatedPagesRead,
         totalPages: bookData.totalPages,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("data", data);
         if (data.result) {
           console.log("Progression mise à jour !");
           //reload updated informations
+          console.log("pages lues", updatedPagesRead);
           if (onDataChange) {
             onDataChange(); // Refresh Home
           }
@@ -84,8 +83,9 @@ export default function FollowedBooks({ bookId, pagesRead, onDataChange }) {
   };
 
   const handleMarkAsRead = async () => {
-    setUpdatedPagesRead(bookData.totalPages);
-    handleUpdateProgression();
+    const pages = bookData.totalPages;
+    setUpdatedPagesRead(pages);
+    handleUpdateProgression(pages);
   };
 
   return (
@@ -151,7 +151,7 @@ export default function FollowedBooks({ bookId, pagesRead, onDataChange }) {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.confirmButton}
-                onPress={handleUpdateProgression}
+                onPress={() => handleUpdateProgression(updatedPagesRead)}
               >
                 <Text style={styles.confirmButtonText}>Valider</Text>
               </TouchableOpacity>
