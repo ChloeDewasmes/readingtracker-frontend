@@ -28,16 +28,16 @@ Cela démarrera l'application dans un simulateur ou sur un appareil physique via
 
 
 
-### Dépendances principales
+## Dépendances principales
 React Native : Framework utilisé pour développer l'application mobile.
 Expo : Pour simplifier le processus de développement et le déploiement.
 AsyncStorage : Pour stocker des données localement sur l'appareil de l'utilisateur.
 React Navigation : Pour gérer la navigation dans l'application.
 
-### Fonctionnalités
+## Fonctionnalités
 Suivi de la progression de lecture : L'utilisateur peut suivre les pages lues d'un livre.
 Badges : Attribution de badges basés sur l'activité de lecture.
 Modal pour l'édition de la progression : Permet à l'utilisateur de modifier sa progression de lecture directement dans une modale.
 
-### Instructions supplémentaires
+## Instructions supplémentaires
 L'application nécessite un backend pour fonctionner correctement. Assurez-vous que le serveur backend est en fonctionnement
