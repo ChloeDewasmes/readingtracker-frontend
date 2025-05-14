@@ -3,8 +3,8 @@
 ## Prérequis
 
 - Node.js
-- Yarn (si tu utilises Yarn)
-- Expo CLI (si tu utilises Expo pour le développement)
+- Yarn
+- Expo CLI
 
 ## Installation
 
